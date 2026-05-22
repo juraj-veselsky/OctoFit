@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { API_BASE_URL, normalizeResponse } from '../config/api';
+import { normalizeResponse } from '../config/api';
 
 const formatEntity = (entity) => {
   if (!entity) return 'N/A';
   return typeof entity === 'object' ? entity.name || entity.title || 'Unknown' : entity;
 };
+
+const ACTIVITIES_ENDPOINT = import.meta.env.VITE_CODESPACE_NAME
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/activities`
+  : 'http://localhost:8000/api/activities';
 
 function Activities() {
   const [activities, setActivities] = useState([]);
@@ -14,7 +18,7 @@ function Activities() {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/activities`);
+        const response = await fetch(ACTIVITIES_ENDPOINT);
         if (!response.ok) throw new Error('Failed to load activities');
         const payload = await response.json();
         setActivities(normalizeResponse(payload));

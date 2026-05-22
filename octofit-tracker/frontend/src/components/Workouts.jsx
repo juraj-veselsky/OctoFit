@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { API_BASE_URL, normalizeResponse } from '../config/api';
+import { normalizeResponse } from '../config/api';
 
 const formatUser = (user) => {
   if (!user) return 'N/A';
   return typeof user === 'object' ? user.name || 'Unknown' : user;
 };
+
+const WORKOUTS_ENDPOINT = import.meta.env.VITE_CODESPACE_NAME
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/workouts`
+  : 'http://localhost:8000/api/workouts';
 
 function Workouts() {
   const [workouts, setWorkouts] = useState([]);
@@ -14,7 +18,7 @@ function Workouts() {
   useEffect(() => {
     const fetchWorkouts = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/workouts`);
+        const response = await fetch(WORKOUTS_ENDPOINT);
         if (!response.ok) throw new Error('Failed to load workouts');
         const payload = await response.json();
         setWorkouts(normalizeResponse(payload));

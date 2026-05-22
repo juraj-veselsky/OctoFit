@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { API_BASE_URL, normalizeResponse } from '../config/api';
+import { normalizeResponse } from '../config/api';
 
 const formatEntity = (entity) => {
   if (!entity) return 'N/A';
   return typeof entity === 'object' ? entity.name || entity.title || 'Unknown' : entity;
 };
+
+const LEADERBOARD_ENDPOINT = import.meta.env.VITE_CODESPACE_NAME
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/leaderboard`
+  : 'http://localhost:8000/api/leaderboard';
 
 function Leaderboard() {
   const [entries, setEntries] = useState([]);
@@ -14,7 +18,7 @@ function Leaderboard() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/leaderboard`);
+        const response = await fetch(LEADERBOARD_ENDPOINT);
         if (!response.ok) throw new Error('Failed to load leaderboard');
         const payload = await response.json();
         setEntries(normalizeResponse(payload));
