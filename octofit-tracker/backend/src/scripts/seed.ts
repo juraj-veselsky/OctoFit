@@ -5,14 +5,13 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { User, Team, Activity, Workout, LeaderboardEntry } from '../models';
+import { connectDatabase, MONGODB_URI } from '../config/database';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
-
 const seed = async () => {
   console.log('Seed the octofit_db database with test data');
-  await mongoose.connect(MONGODB_URI);
+  await connectDatabase();
 
   try {
     await Promise.all([
