@@ -1,6 +1,5 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import {
   User,
   Team,
@@ -8,35 +7,16 @@ import {
   Workout,
   LeaderboardEntry,
 } from './models';
-import { connectDatabase, MONGODB_URI } from './config/database';
 
-dotenv.config();
-
-const app: Express = express();
-const PORT = Number(process.env.PORT) || 8000;
-const codespaceName = process.env.CODESPACE_NAME;
-const API_BASE_URL = process.env.API_URL || (codespaceName
-  ? `https://${codespaceName}-8000.app.github.dev`
-  : `http://localhost:${PORT}`);
+export const app: Express = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-connectDatabase()
-  .then(() => {
-    console.log(`Connected to MongoDB at ${MONGODB_URI}`);
-  })
-  .catch((error) => {
-    console.error('MongoDB connection error:', error);
-  });
-
 app.get('/', (req: Request, res: Response) => {
   res.json({
     message: 'OctoFit Tracker API',
-    apiBaseUrl: API_BASE_URL,
-    port: PORT,
   });
 });
 
@@ -99,9 +79,4 @@ app.get('/api/workouts', async (req: Request, res: Response) => {
 app.post('/api/workouts', async (req: Request, res: Response) => {
   const workout = await Workout.create(req.body);
   res.status(201).json(workout);
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`API base URL is ${API_BASE_URL}`);
 });
